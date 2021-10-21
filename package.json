@@ -36,6 +36,7 @@
     "typescript": "^4"
   },
   "dependencies": {
+    "load-json-file": "^7.0.1",
     "yargs": "^15.4.1"
   }
 }
