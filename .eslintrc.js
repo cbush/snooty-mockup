@@ -11,8 +11,5 @@ module.exports = {
     "plugin:prettier/recommended",
     "plugin:@typescript-eslint/recommended",
   ],
-  rules: {
-    "tsdoc/syntax": "warn",
-  },
   ignorePatterns: ["**/build/*"],
 };

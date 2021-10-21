@@ -2,7 +2,10 @@
   "name": "snooty-mockup",
   "version": "0.0.1",
   "description": "Mock up snooty sites from JSON",
-  "main": "index.js",
+  "main": "./build",
+  "bin": {
+    "snooty-mockup": "./build/main.js"
+  },
   "scripts": {
     "clean": "rm -rf build",
     "build": "tsc -b",
@@ -31,5 +34,8 @@
     "ts-jest": "^26",
     "typedoc": "^0",
     "typescript": "^4"
+  },
+  "dependencies": {
+    "yargs": "^15.4.1"
   }
 }
