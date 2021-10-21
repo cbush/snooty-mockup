@@ -1,5 +1,4 @@
-import { promises as fs } from "fs";
-import * as Path from "path";
+import { promises as fs, existsSync } from "fs";
 import { Argv, CommandModule } from "yargs";
 import { buildPages } from "../buildPages";
 import { loadManifest } from "../loadManifest";
@@ -18,11 +17,9 @@ type GenerateArgs = {
 
 export async function generate({ jsonPath, out }: GenerateArgs): Promise<void> {
   // Confirm that we will not overwrite destination directory
-  const stat = await fs.lstat(out);
-  if (stat.isDirectory()) {
-    throw new Error(`directory already exists: ${out}`);
+  if (existsSync(out)) {
+    throw new Error(`will not overwrite output path: ${out}`);
   }
-
   const manifest = await loadManifest(jsonPath);
 
   await buildPages({

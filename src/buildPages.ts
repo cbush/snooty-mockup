@@ -6,7 +6,10 @@ const titleToUriSegment = ({ title }: { title: string }): string => {
   return title
     .replace(/&/g, "and") // ampersands become "and"
     .replace(/[^A-z0-9]/g, "-") // non-alphanumeric characters become dashes
-    .replace(/-+/g, "-"); // multiple dashes become one dash
+    .replace(/-+/g, "-") // multiple dashes become one dash
+    .replace(/^-+/, "") // trim starting dashes
+    .replace(/-+$/, "") // trim trailing dashes
+    .toLowerCase();
 };
 
 const pageFromPageOrTitle = (pageOrTitle: Page | string): Page =>
@@ -43,25 +46,28 @@ export const buildPages = async ({
    :titlesonly:
    :hidden:
 
-${page.children.map((subpageOrTitle) => {
-  const subpage = pageFromPageOrTitle(subpageOrTitle);
-  return `   ${subpage.title} <${Path.join(
-    pagePath,
-    titleToUriSegment(subpage)
-  )}>`;
-})}`;
+${page.children
+  .map((subpageOrTitle) => {
+    const subpage = pageFromPageOrTitle(subpageOrTitle);
+    return `   ${subpage.title} <${Path.join(
+      pagePath,
+      titleToUriSegment(subpage)
+    )}>`;
+  })
+  .join("\n")}`;
   const text = `===
 ${page.title}
 ===
 
 ${page.children.length === 0 ? "" : tocTree}
+
 `;
-  await fs.writeFile(`${pagePath}.txt`, text, "utf8");
+  await fs.writeFile(Path.join(basePath, `${pagePath}.txt`), text, "utf8");
   await Promise.all(
     page.children.map((subpage) =>
       buildPages({
         basePath,
-        subPath: pagePath,
+        subPath: isRoot ? "." : pagePath,
         page: subpage,
       })
     )
