@@ -40,8 +40,8 @@ export const buildPages = async ({
   const page = pageFromPageOrTitle(pageOrTitle);
 
   const isRoot = subPath === "/";
-  const pageUriSegment = isRoot ? "index" : titleToUriSegment(page);
-  const pagePath = Path.join(subPath, pageUriSegment);
+  const pageUriSegment = titleToUriSegment(page);
+  const pagePath = isRoot ? subPath : Path.join(subPath, pageUriSegment);
   const tocTree = `.. toctree::
    :titlesonly:
    :hidden:
@@ -55,14 +55,19 @@ ${page.children
     )}>`;
   })
   .join("\n")}`;
-  const text = `===
+  const headingDecorator = new Array(page.title.length).fill("=").join("");
+  const text = `${headingDecorator}
 ${page.title}
-===
+${headingDecorator}
 
 ${page.children.length === 0 ? "" : tocTree}
 
 `;
-  await fs.writeFile(Path.join(basePath, `${pagePath}.txt`), text, "utf8");
+  await fs.writeFile(
+    Path.join(basePath, isRoot ? "index.txt" : `${pagePath}.txt`),
+    text,
+    "utf8"
+  );
   await Promise.all(
     page.children.map((subpage) =>
       buildPages({
